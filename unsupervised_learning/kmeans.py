@@ -1,5 +1,7 @@
 import numpy as np
-from preprocessing import hypercube_normalization
+from utils.preprocessing import hypercube_normalization
+from utils.clusterization import init_centroids
+
 
 class KMeans(object):    
     """ A clustering method that forms k clusters by iteratively reassigning
@@ -29,40 +31,6 @@ class KMeans(object):
         self.init_mode = init_mode
         self.centroids = None
         self.clusters = None
-       
-    def __init_centroids(self, data, n, mode):
-        """ Initialize the centroids.
-        Has two mode: take n random samples of data as the centroids and 
-        random sharing.
-        
-        Read about random sharing:
-        https://www.kdnuggets.com/2017/03/naive-sharding-centroid-initialization-method.html
-        
-        Args:
-            data: numpy array
-                2d dataset array, where a horizontal axis is equal to the 
-                number of features, a vertical axis is equal to the number of 
-                dataset samples.
-            n: int
-                The number of clusters the algorithm will form.
-                
-        Returns:
-            centroids: numpy 0d array
-                An array stores the init coordinates of the centroids.
-        """
-        
-        if mode == "random_sample":
-            index = np.random.choice(data.shape[0], n, replace=False)
-            return data[index]
-        elif mode == "sharding_init":
-            attr_sum = np.sort(np.sum(data, axis=1))
-            clusters_idx = np.array_split([*range(len(attr_sum))], n)
-            centroids = []
-            for idx in clusters_idx:
-                centroids.append(np.mean(data[idx], axis=0))      
-            return np.array(centroids)
-        else:
-            raise Exception('No such init!')
             
     def __compute_distance(self, x, centroid):
         """ Finds the Euclidean distance between a sample and a centroid.
@@ -134,10 +102,9 @@ class KMeans(object):
         
         iteration = 0
         data = hypercube_normalization(data)
-        self.centroids = self.__init_centroids(data, self.n_clusters, self.init_mode)
+        self.centroids = init_centroids(data, self.n_clusters, self.init_mode)
         prev_centroids =  np.empty_like(self.centroids)
-    
-        
+            
         while np.any(np.power(self.centroids - prev_centroids, 2) > stop) and self.max_iter > iteration:
             iteration += 1
             self.__find_nearest_centroids(data)
