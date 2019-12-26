@@ -5,6 +5,6 @@
 - [Naive Bayes](supervised_learning/gaussian_naive_bayes.py)
 
 ### Unsupervised Learning
-- [Fuzzy C-Means](unsupervised_learning/kmeans.py)
-- [K-Means](unsupervised_learning/fcm.py)
+- [Fuzzy C-Means](unsupervised_learning/fcm.py)
+- [K-Means](unsupervised_learning/kmeans.py)
 - [Oja learning rule](unsupervised_learning/oja.py)
